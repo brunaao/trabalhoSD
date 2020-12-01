@@ -18,7 +18,8 @@ public class ThreadUsuario extends Thread {
     private String acao;
     private Long k;
     private Tripla instancia;
-
+    private Servidor serv;
+ 
     public ThreadUsuario(String usuNome, String acao, Long k, Tripla instancia) {
         this.usuNome = usuNome;
         this.acao = acao;
@@ -26,35 +27,38 @@ public class ThreadUsuario extends Thread {
         this.instancia = instancia;
     }
 
-    public ThreadUsuario(String usuNome) {
-        t = new Thread(this, usuNome);
+    public ThreadUsuario(String usuNome, Servidor s) {
         this.usuNome = usuNome;
+        this.serv = s;
 
     }
 
     public void executarAcao(String acao, Long k, Tripla instancia) {
-        System.out.println("O usuario " + usuNome + " esta tendo " + acao);
+        System.out.println("O usuario " + usuNome + " esta fazendo a acao de " + acao);
         this.acao = acao;
         this.k = k;
         this.instancia = instancia;
+        t = new Thread(this, usuNome);
         t.start();
+
+        
     }
 
     @Override
     public void run() {
-        //Random gerador = new Random();
-        //byte[] b = {0x54, 0x56};
-
-        System.out.println("Salvando os dados: " + instancia.getData() + " No usuario:" + usuNome);
-        Intermediador inter = new Intermediador();
-        synchronized (inter) {
+        System.out.println("Salvando os dados: " + instancia + " No usuario:" + usuNome);
+        try{
+        
             if ("SALVAR".equals(acao)) {
-                Tupla t = inter.salvar(k, instancia.getTs(), instancia.getData());
-                System.out.println("users:" + usuNome + " e:" + t.getE() + " tripla:" + t.getResult());
+                Tupla resultado = serv.set(k, instancia.getTs(), instancia.getData());
+                System.out.println("users:" + usuNome + " e:" + resultado.getE() + " tripla:" + resultado.getResult());
             } else {
                 System.out.println("Acao invalida");
             }
+        }catch(NullPointerException e){
+            System.out.println("Erro " + e);
         }
+            
         //k = gerador.nextLong();
         //instancia.setTs(gerador.nextLong());
         //gerador.nextBytes(b);
@@ -65,10 +69,9 @@ public class ThreadUsuario extends Thread {
     @Override
     public void start() {
         System.out.println("O usuario " + usuNome + " esta tendo " + acao);
-        if (t == null) {
-            t = new Thread(this, usuNome);
-            t.start();
-        }
+        t = new Thread(this, usuNome);
+        t.start();
+
     }
 
 }

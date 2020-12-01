@@ -12,11 +12,13 @@ package trabalhosd_api;
 public class Intermediador {
     
     static Servidor s;
+    
     static{
         s = new Servidor();
     }
 
     public Tupla salvar(Long k, Long ts, byte[] data) {
+        
         return s.set(k, ts, data);
     }
 

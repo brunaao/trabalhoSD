@@ -51,7 +51,6 @@ public class Tripla {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + Objects.hashCode(this.ver);
         hash = 37 * hash + Objects.hashCode(this.ts);
         hash = 37 * hash + Arrays.hashCode(this.data);
         return hash;
@@ -69,9 +68,6 @@ public class Tripla {
             return false;
         }
         final Tripla other = (Tripla) obj;
-        if (!Objects.equals(this.ver, other.ver)) {
-            return false;
-        }
         if (!Objects.equals(this.ts, other.ts)) {
             return false;
         }
@@ -81,12 +77,9 @@ public class Tripla {
         return true;
     }
 
-   
-
-    
-    
-    
-    
-    
+    @Override
+    public String toString() {
+        return "Tripla{" + "ver=" + ver + ", ts=" + ts + ", data=" + data + '}';
+    }    
     
 }
