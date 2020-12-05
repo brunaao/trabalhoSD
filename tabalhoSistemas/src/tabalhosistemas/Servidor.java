@@ -94,30 +94,32 @@ public class Servidor {
     }
 
     public synchronized void salvar() throws IOException {
-        FileWriter csvWriter = new FileWriter("/D:/Users/br/Documents/NetBeansProjects/tabalhoSistemas/dadosBD_2020.csv");
-        for (Long codDado : dadosBd.keySet()) {
-            Tripla c = dadosBd.get(codDado);
-            Byte[] b = c.getData();
-            String arrayb = "";
-            for(int i = 0; i<b.length;i++){
-                if (i+1 == b.length){
-                    arrayb += b[i];
+        try (FileWriter csvWriter = new FileWriter("dadosBD_2020.csv")) {
+            for (Long codDado : dadosBd.keySet()) {
+                Tripla c = dadosBd.get(codDado);
+                Byte[] b = c.getData();
+                String arrayb = "";
+                for(int i = 0; i<b.length;i++){
+                    if (i+1 == b.length){
+                        arrayb += b[i];
+                    }
+                    else{
+                        arrayb += b[i] + ";";
+                    }
                 }
-                else{
-                    arrayb += b[i] + ";";
-                }
+                csvWriter.append(codDado+","+c.getVer()+","+c.getTs()+","+arrayb);
+                csvWriter.append("\n");
             }
-            csvWriter.append(codDado+","+c.getVer()+","+c.getTs()+","+arrayb);
-            csvWriter.append("\n");
+            csvWriter.flush();
+            csvWriter.close();
+            ultimaVezSalvo = new Timestamp(System.currentTimeMillis());
         }
-        csvWriter.flush();
-        csvWriter.close();
-        ultimaVezSalvo = new Timestamp(System.currentTimeMillis());
+       
 
     }
 
     public synchronized void puxar() throws FileNotFoundException, IOException {
-        try (BufferedReader csvReader = new BufferedReader(new FileReader("D:/Users/br/Documents/NetBeansProjects/tabalhoSistemas/dadosBD_2020.csv"))) {
+        try (BufferedReader csvReader = new BufferedReader(new FileReader("dadosBD_2020.csv"))) {
             dadosBd =  java.util.Collections.synchronizedMap(new HashMap<>());
             String row;
             Tripla dado;
