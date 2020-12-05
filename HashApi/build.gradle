@@ -3,7 +3,7 @@ apply plugin: 'com.google.protobuf'
 apply plugin: 'application'
 
 application {
-    mainClassName = 'br.ufu.sd.client.GrpcClient'
+    mainClassName = 'br.ufu.sd.client.ui.Menu'
 }
 
 buildscript {
@@ -63,21 +63,19 @@ protobuf {
     }
 }
 
-jar {
-    manifest {
-        attributes(
-                'Class-Path': configurations.compile.collect { it.getName() }.join(' '),
-                'Main-Class': 'br.ufu.sd.server.GrpcServer'
-        )
-    }
-}
-
 //task client(type: CreateStartScripts) {
 //    mainClassName = 'br.ufu.sd.client.GrpcClient'
 //    applicationName = 'client'
 //    outputDir = new File(project.buildDir, 'tmp')
 //    classpath = startScripts.classpath
 //}
+
+task menu(type: JavaExec) {
+    group = "Execution"
+    description = "Run Interface"
+    classpath = startScripts.classpath
+    main = "br.ufu.sd.client.ui.Menu"
+}
 
 task client(type: JavaExec) {
     group = "Execution"
