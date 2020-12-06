@@ -15,13 +15,13 @@ public class HashTableServer {
 
     private Server server;
 
-    private void start() throws IOException {
+    private void start(int intervalo) throws IOException {
         int port = 50051;
         server = ServerBuilder.forPort(port)
-                .addService(new ApiService(2))
+                .addService(new ApiService(intervalo))
                 .build()
                 .start();
-        logger.info("Server started, listening on " + port);
+        logger.info("Servidor iniciado na porta " + port + ". Salvamento em disco com periodicidade de " + intervalo + " segundos");
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -57,7 +57,11 @@ public class HashTableServer {
      */
     public static void main(String[] args) throws IOException, InterruptedException {
         final HashTableServer server = new HashTableServer();
-        server.start();
+        int periodicidade = 2;
+        if(args.length > 0){
+        	periodicidade = Integer.parseInt(args[0]);
+        }
+        server.start(periodicidade);
         server.blockUntilShutdown();
     }
 }
