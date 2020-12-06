@@ -5,6 +5,10 @@
  */
 package br.ufu.sd.client.ui;
 
+import br.ufu.sd.client.HashTableApi;
+import br.ufu.sd.grpc.Saida;
+import com.google.protobuf.ByteString;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,14 +17,14 @@ import javax.swing.JOptionPane;
  */
 public class Cadastrar extends javax.swing.JFrame {
     
-    String dado;
-    String chave;
-    
+    private HashTableApi client;
     /**
      * Creates new form Cadastrar
      */
-    public Cadastrar() {
+    
+    public Cadastrar(HashTableApi client) {
         initComponents();
+        this.client = client;
     }
 
     /**
@@ -130,55 +134,34 @@ public class Cadastrar extends javax.swing.JFrame {
     }//GEN-LAST:event_j_text_chaveActionPerformed
 
     private void jButton_cadastro_efetuadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastro_efetuadoActionPerformed
-        chave = j_text_chave.getText();
-        dado  = j_text_dado.getText();
-        
-        JOptionPane.showMessageDialog(this, chave);
-
+        Saida saida;
+        String texto;
+        ByteString dado = ByteString.copyFrom(j_text_dado.getText().getBytes());
+        long chave = (long) Integer.parseInt(j_text_chave.getText());
+        //JOptionPane.showMessageDialog(this, chave);
+        saida = this.client.set(chave, dado);
+        if(saida == null){
+            texto = "Um erro insesperado aconteceu";
+        }
+        else if(saida.getValue().getTimeSt() == 0){
+            texto = "A chave " + chave + " foi inserida no banco";
+        }else{
+            texto = "A valor abaixo foi deletado\n"
+                    + saida.getValue().getVersion() + "\n"
+                    + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + saida.getValue().getData().toStringUtf8();
+        }
+        JOptionPane.showMessageDialog(this,texto);
     }//GEN-LAST:event_jButton_cadastro_efetuadoActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new Menu().setVisible(true);
+        new Menu(this.client).setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void j_text_dadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_text_dadoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_j_text_dadoActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Cadastrar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Cadastrar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Cadastrar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Cadastrar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Cadastrar().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

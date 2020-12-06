@@ -6,16 +6,23 @@
 
 package br.ufu.sd.client.ui;
 
+import br.ufu.sd.client.HashTableApi;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
+import java.util.concurrent.TimeUnit;
+
 /**
  *
  * @author Giullia
  */
 public class Menu extends javax.swing.JFrame {
     
+    private HashTableApi client;
 
     /** Creates new form Principal */
-    public Menu() {
+    public Menu(HashTableApi client) {
         initComponents();
+        this.client = client;
     }
 
     /** This method is called from within the constructor to
@@ -115,25 +122,26 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastrarActionPerformed
-        new Cadastrar().setVisible(true);
+        new Cadastrar(this.client).setVisible(true);
     }//GEN-LAST:event_jButton_cadastrarActionPerformed
 
     private void jButton_consultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_consultarActionPerformed
-        new Consultar().setVisible(true);
+        new Consultar(this.client).setVisible(true);
     }//GEN-LAST:event_jButton_consultarActionPerformed
 
     private void jButton_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_excluirActionPerformed
-        new Excluir().setVisible(true);
+        new Excluir(this.client).setVisible(true);
     }//GEN-LAST:event_jButton_excluirActionPerformed
 
     private void jButton_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_editarActionPerformed
-        new Editar().setVisible(true);
+        new Editar(this.client).setVisible(true);
     }//GEN-LAST:event_jButton_editarActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws InterruptedException {
+        String target = "localhost:50051";
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -161,11 +169,17 @@ public class Menu extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
+        ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
+                .usePlaintext()
+                .build();
+        
+        HashTableApi client = new HashTableApi(channel);
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Menu().setVisible(true);
+                new Menu(client).setVisible(true);
             }
         });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
