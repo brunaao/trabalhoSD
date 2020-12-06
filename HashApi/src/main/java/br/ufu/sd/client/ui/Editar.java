@@ -160,7 +160,7 @@ public class Editar extends javax.swing.JFrame {
         
         Saida saida = this.client.testAndSet(chave, versao, dado);
         if(saida == null){
-            texto = "Um erro insesperado aconteceu";
+            texto = "Não foi possível estabelecer uma conexão com o servidor";
         }
         else if(saida.getValue().getTimeSt() == 0){
             texto = "A chave " + chave + " nao existe no banco";

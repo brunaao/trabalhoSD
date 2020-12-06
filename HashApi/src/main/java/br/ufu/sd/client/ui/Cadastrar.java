@@ -133,7 +133,7 @@ public class Cadastrar extends javax.swing.JFrame {
         //JOptionPane.showMessageDialog(this, chave);
         saida = this.client.set(chave, dado);
         if(saida == null){
-            texto = "Um erro insesperado aconteceu";
+            texto = "Não foi possível estabelecer uma conexão com o servidor";
         }
         else if(saida.getValue().getTimeSt() == 0){
             texto = "A chave " + chave + " foi inserida no banco";

@@ -115,7 +115,7 @@ public class ExcluirChaveVersao extends javax.swing.JFrame {
         String texto;
         Saida saida = this.client.delKV(chave, versao);
         if(saida == null){
-            texto = "Um erro insesperado aconteceu";
+            texto = "Não foi possível estabelecer uma conexão com o servidor";
         }else if(saida.getValue().getTimeSt() == 0){
             texto = "A chave " + chave + " versao " + versao + " nao existe";
         }else if(saida.getError().equals("ERROR_WV")){

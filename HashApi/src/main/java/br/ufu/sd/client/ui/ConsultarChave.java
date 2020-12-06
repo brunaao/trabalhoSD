@@ -111,7 +111,7 @@ public class ConsultarChave extends javax.swing.JFrame {
         long chave = (long) Integer.parseInt(jTextField1.getText());
         Saida saida = this.client.get(chave);
         if(saida == null){
-            texto = "Um erro insesperado aconteceu";
+            texto = "Não foi possível estabelecer uma conexão com o servidor";
         }else if(saida.getValue().getTimeSt() == 0){
             texto = "Valor nao encontrado";
         }else{
