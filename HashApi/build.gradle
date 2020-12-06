@@ -72,16 +72,9 @@ protobuf {
 
 task menu(type: JavaExec) {
     group = "Execution"
-    description = "Run Interface"
+    description = "Run the UI that calls the client for GRPC"
     classpath = startScripts.classpath
     main = "br.ufu.sd.client.ui.Menu"
-}
-
-task client(type: JavaExec) {
-    group = "Execution"
-    description = "Run the client for GRPC"
-    classpath = startScripts.classpath
-    main = "br.ufu.sd.client.HashTableClient"
 }
 
 task server(type: JavaExec) {
@@ -90,3 +83,4 @@ task server(type: JavaExec) {
     classpath = startScripts.classpath
     main = "br.ufu.sd.server.HashTableServer"
 }
+
