@@ -139,9 +139,9 @@ public class Cadastrar extends javax.swing.JFrame {
             texto = "A chave " + chave + " foi inserida no banco";
         }else{
             texto = "O valor antigo abaixo foi atualizado\n"
-                    + saida.getValue().getVersion() + "\n"
-                    + new Date(saida.getValue().getTimeSt()) + "\n"
-                    + saida.getValue().getData().toStringUtf8();
+                    + "Versão: " + saida.getValue().getVersion() + "\n"
+                    + "TimeStamp: " + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + "Dado: " + saida.getValue().getData().toStringUtf8();
         }
         JOptionPane.showMessageDialog(this,texto);
     }//GEN-LAST:event_jButton_cadastro_efetuadoActionPerformed

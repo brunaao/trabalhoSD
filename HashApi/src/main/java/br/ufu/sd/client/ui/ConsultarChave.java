@@ -116,9 +116,9 @@ public class ConsultarChave extends javax.swing.JFrame {
             texto = "Valor nao encontrado";
         }else{
             texto = "O valor consultado eh:\n"
-            + saida.getValue().getVersion() + "\n"
-            + new Date(saida.getValue().getTimeSt()) + "\n"
-            + saida.getValue().getData().toStringUtf8();
+                    + "Versão: " + saida.getValue().getVersion() + "\n"
+                    + "TimeStamp: " + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + "Dado: " + saida.getValue().getData().toStringUtf8();
         }
         JOptionPane.showMessageDialog(this, texto);
     }//GEN-LAST:event_consultarActionPerformed

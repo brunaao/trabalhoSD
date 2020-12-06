@@ -168,9 +168,9 @@ public class Editar extends javax.swing.JFrame {
             texto = "A chave " + chave + " na versao " + versao + " nao existe no banco";
         }else{
             texto = "Atualizado, os novos valores sao:\n"
-                    + saida.getValue().getVersion() + "\n"
-                    + new Date(saida.getValue().getTimeSt()) + "\n"
-                    + saida.getValue().getData().toStringUtf8();
+                    + "Versão: " + saida.getValue().getVersion() + "\n"
+                    + "TimeStamp: " + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + "Dado: " + saida.getValue().getData().toStringUtf8();
         }
         JOptionPane.showMessageDialog(this, texto);        // TODO add your handling code here:
     }//GEN-LAST:event_botaoAlterarActionPerformed

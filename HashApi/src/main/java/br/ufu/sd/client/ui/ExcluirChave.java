@@ -117,9 +117,9 @@ public class ExcluirChave extends javax.swing.JFrame {
             texto = "A chave " + chave + " nao existe";
         }else{
             texto = "A valor abaixo foi deletado\n"
-                    + saida.getValue().getVersion() + "\n"
-                    + new Date(saida.getValue().getTimeSt()) + "\n"
-                    + saida.getValue().getData().toStringUtf8();
+                    + "Versão: " + saida.getValue().getVersion() + "\n"
+                    + "TimeStamp: " + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + "Dado: " + saida.getValue().getData().toStringUtf8();
         }
         JOptionPane.showMessageDialog(this, texto);
     }//GEN-LAST:event_excluirActionPerformed
