@@ -90,3 +90,10 @@ task server(type: JavaExec) {
     classpath = startScripts.classpath
     main = "br.ufu.sd.server.HashTableServer"
 }
+
+task teste(type: JavaExec) {
+    group = "Execution"
+    description = "Run the server for GRPC"
+    classpath = startScripts.classpath
+    main = "br.ufu.sd.client.TestClient"
+}

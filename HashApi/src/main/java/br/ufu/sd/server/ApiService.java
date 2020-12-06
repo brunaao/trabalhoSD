@@ -17,7 +17,7 @@ public class ApiService extends APIImplBase {
     public ApiService(int intervaloBackup) {
         map = new ConcurrentHashMap<>();
         INTERVALO_BACKUP = intervaloBackup;
-        ARQUIVO_DISCO = "backup.csv";
+        ARQUIVO_DISCO = "database.csv";
         try {
             carregar();
             ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -188,7 +188,6 @@ public class ApiService extends APIImplBase {
                 map.put(chave, dado);
             }
         }catch(FileNotFoundException e){
-            System.out.println("Banco n encontrado");
             this.salvar();
         } catch (IOException e) {
             e.printStackTrace();
