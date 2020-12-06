@@ -220,3 +220,5 @@ gradle-app.setting
 
 ### Gradle Patch ###
 **/build/
+
+HashApi/backup.csv
