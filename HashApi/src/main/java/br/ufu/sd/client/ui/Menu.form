@@ -81,7 +81,7 @@
   <SubComponents>
     <Component class="javax.swing.JButton" name="jButton_cadastrar">
       <Properties>
-        <Property name="text" type="java.lang.String" value="CADASTRAR"/>
+        <Property name="text" type="java.lang.String" value="INSERIR"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton_cadastrarActionPerformed"/>

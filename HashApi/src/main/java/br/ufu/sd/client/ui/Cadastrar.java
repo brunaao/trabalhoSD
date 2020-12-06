@@ -17,14 +17,17 @@ import javax.swing.JOptionPane;
  */
 public class Cadastrar extends javax.swing.JFrame {
     
+    private Menu menu;
     private HashTableApi client;
     /**
      * Creates new form Cadastrar
      */
     
-    public Cadastrar(HashTableApi client) {
+    public Cadastrar(HashTableApi client, Menu menu) {
         initComponents();
         this.client = client;
+        this.menu = menu;
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -146,7 +149,7 @@ public class Cadastrar extends javax.swing.JFrame {
         else if(saida.getValue().getTimeSt() == 0){
             texto = "A chave " + chave + " foi inserida no banco";
         }else{
-            texto = "A valor abaixo foi deletado\n"
+            texto = "O valor antigo abaixo foi atualizado\n"
                     + saida.getValue().getVersion() + "\n"
                     + new Date(saida.getValue().getTimeSt()) + "\n"
                     + saida.getValue().getData().toStringUtf8();
@@ -155,7 +158,8 @@ public class Cadastrar extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton_cadastro_efetuadoActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new Menu(this.client).setVisible(true);
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void j_text_dadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_j_text_dadoActionPerformed

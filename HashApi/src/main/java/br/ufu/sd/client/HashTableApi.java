@@ -78,10 +78,11 @@ public class HashTableApi {
         }
     }
 
-    public Saida testAndSet(long k, long t, ByteString d, long vers) {
+    public Saida testAndSet(long k, long vers, ByteString d) {
+        long timestamp = new Date().getTime();
         logger.info("Executando comando del...");
         Chave key = Chave.newBuilder().setKey(k).build();
-        Valor val = Valor.newBuilder().setVersion(vers).setTimeSt(t).setData(d).build();
+        Valor val = Valor.newBuilder().setVersion(vers).setTimeSt(timestamp).setData(d).build();
         ChaveValorVersao keyValVers = ChaveValorVersao.newBuilder().setKey(key).setValue(val).setVersion(vers).build();
         Saida resposta;
         try {

@@ -6,6 +6,9 @@
 package br.ufu.sd.client.ui;
 
 import br.ufu.sd.client.HashTableApi;
+import br.ufu.sd.grpc.Saida;
+import com.google.protobuf.ByteString;
+import java.util.Date;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,17 +16,17 @@ import javax.swing.JOptionPane;
  * @author Giullia
  */
 public class Editar extends javax.swing.JFrame {
-    
-    private String dado;
-    private String chave;
 
     private HashTableApi client;
+    private Menu menu;
     /**
      * Creates new form Editar
      */
-    public Editar(HashTableApi client) {
+    public Editar(HashTableApi client, Menu menu) {
         initComponents();
+        this.menu = menu;
         this.client = client;
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -38,10 +41,12 @@ public class Editar extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        chaveTexto = new javax.swing.JTextField();
+        dadoTexto = new javax.swing.JTextField();
+        botaoAlterar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
+        versaoTexto = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -54,20 +59,34 @@ public class Editar extends javax.swing.JFrame {
 
         jLabel1.setText("CHAVE:");
 
-        jLabel2.setText("DADO:");
+        jLabel2.setText("Novo Dado");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        chaveTexto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                chaveTextoActionPerformed(evt);
             }
         });
 
-        jButton2.setText("CONCLUIR");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        dadoTexto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                dadoTextoActionPerformed(evt);
             }
         });
+
+        botaoAlterar.setText("CONCLUIR");
+        botaoAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botaoAlterarActionPerformed(evt);
+            }
+        });
+
+        versaoTexto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                versaoTextoActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Versão");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -76,23 +95,33 @@ public class Editar extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(100, 100, 100)
                 .addComponent(jButton1)
-                .addGap(198, 198, 198)
+                .addGap(192, 192, 192)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel1))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGap(110, 110, 110)
-                            .addComponent(jButton2)
-                            .addGap(46, 46, 46)))
-                    .addComponent(jLabel3))
-                .addContainerGap(401, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(592, 592, 592))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(110, 110, 110)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(botaoAlterar)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(chaveTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)
+                                        .addComponent(jLabel4)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(versaoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(186, 186, 186)
+                                        .addComponent(jLabel2)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(dadoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(66, 66, 66))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -107,13 +136,15 @@ public class Editar extends javax.swing.JFrame {
                         .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(chaveTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(versaoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(dadoTexto, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(42, 42, 42)
-                        .addComponent(jButton2)))
+                        .addComponent(botaoAlterar)))
                 .addContainerGap(120, Short.MAX_VALUE))
         );
 
@@ -121,29 +152,55 @@ public class Editar extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        new Menu(this.client).setVisible(true);
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void chaveTextoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chaveTextoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_chaveTextoActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void botaoAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botaoAlterarActionPerformed
+        String texto;
+        long chave = (long) Integer.parseInt(chaveTexto.getText());
+        long versao = (long) Integer.parseInt(versaoTexto.getText());
+        ByteString dado = ByteString.copyFrom(dadoTexto.getText().getBytes());
         
-        chave = jTextField1.getText();
-        dado  = jTextField2.getText();
-        
-        JOptionPane.showMessageDialog(this, chave);        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+        Saida saida = this.client.testAndSet(chave, versao, dado);
+        if(saida == null){
+            texto = "Um erro insesperado aconteceu";
+        }
+        else if(saida.getValue().getTimeSt() == 0){
+            texto = "A chave" + chave + " nao existe no banco";
+        }else if(saida.getError().equals("ERROR_WV")){
+            texto = "A chave" + chave + " na versao " + versao + " nao existe no banco";
+        }else{
+            texto = "Atualizado, os novos valores sao:\n"
+                    + saida.getValue().getVersion() + "\n"
+                    + new Date(saida.getValue().getTimeSt()) + "\n"
+                    + saida.getValue().getData().toStringUtf8();
+        }
+        JOptionPane.showMessageDialog(this, texto);        // TODO add your handling code here:
+    }//GEN-LAST:event_botaoAlterarActionPerformed
+
+    private void versaoTextoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_versaoTextoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_versaoTextoActionPerformed
+
+    private void dadoTextoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_dadoTextoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dadoTextoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton botaoAlterar;
+    private javax.swing.JTextField chaveTexto;
+    private javax.swing.JTextField dadoTexto;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField versaoTexto;
     // End of variables declaration//GEN-END:variables
 }

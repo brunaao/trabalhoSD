@@ -23,6 +23,7 @@ public class Menu extends javax.swing.JFrame {
     public Menu(HashTableApi client) {
         initComponents();
         this.client = client;
+        this.setLocationRelativeTo(null);
     }
 
     /** This method is called from within the constructor to
@@ -44,7 +45,7 @@ public class Menu extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cadastro SD");
 
-        jButton_cadastrar.setText("CADASTRAR");
+        jButton_cadastrar.setText("INSERIR");
         jButton_cadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton_cadastrarActionPerformed(evt);
@@ -122,19 +123,20 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastrarActionPerformed
-        new Cadastrar(this.client).setVisible(true);
+        new Cadastrar(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_cadastrarActionPerformed
 
     private void jButton_consultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_consultarActionPerformed
-        new Consultar(this.client).setVisible(true);
+       new ConsultarChave(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_consultarActionPerformed
 
     private void jButton_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_excluirActionPerformed
-        new Excluir(this.client).setVisible(true);
+        new Excluir(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_excluirActionPerformed
 
     private void jButton_editarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_editarActionPerformed
-        new Editar(this.client).setVisible(true);
+        this.setVisible(false);
+        new Editar(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_editarActionPerformed
 
     /**
