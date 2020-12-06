@@ -104,7 +104,8 @@ public class ConsultarChave extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void voltarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_voltarActionPerformed
-        new Menu(this.client).setVisible(true);
+        menu.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_voltarActionPerformed
 
     private void consultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultarActionPerformed

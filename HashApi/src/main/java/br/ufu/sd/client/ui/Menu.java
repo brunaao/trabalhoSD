@@ -123,14 +123,17 @@ public class Menu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton_cadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_cadastrarActionPerformed
+        this.setVisible(false);
         new Cadastrar(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_cadastrarActionPerformed
 
     private void jButton_consultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_consultarActionPerformed
+       this.setVisible(false);
        new ConsultarChave(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_consultarActionPerformed
 
     private void jButton_excluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_excluirActionPerformed
+        this.setVisible(false);
         new Excluir(this.client, this).setVisible(true);
     }//GEN-LAST:event_jButton_excluirActionPerformed
 
