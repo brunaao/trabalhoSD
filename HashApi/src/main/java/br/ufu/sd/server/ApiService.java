@@ -4,18 +4,19 @@ import br.ufu.sd.grpc.APIGrpc.APIImplBase;
 import br.ufu.sd.grpc.*;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import org.apache.ratis.client.RaftClient;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+// Métodos do server GRPC
+// Os métodos irão chamar os métodos do servidor Ratis
 public class ApiService extends APIImplBase {
     private final ConcurrentMap<Chave, Valor> map;
-    private final int INTERVALO_BACKUP;
     private final String ARQUIVO_DISCO;
 
-    public ApiService(int intervaloBackup) {
+    public ApiService(RaftClient raftClient) {
         map = new ConcurrentHashMap<>();
-        INTERVALO_BACKUP = intervaloBackup;
         ARQUIVO_DISCO = "database.csv";
     }
 

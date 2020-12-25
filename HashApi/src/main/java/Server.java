@@ -1,3 +1,4 @@
+import br.ufu.sd.server.StateMachine;
 import org.apache.ratis.conf.RaftProperties;
 import org.apache.ratis.grpc.GrpcConfigKeys;
 import org.apache.ratis.protocol.RaftGroup;
