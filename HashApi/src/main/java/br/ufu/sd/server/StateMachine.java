@@ -1,3 +1,5 @@
+package br.ufu.sd.server;
+
 import org.apache.ratis.proto.RaftProtos;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.statemachine.TransactionContext;
@@ -9,12 +11,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
 
+// Servidor Ratis
+// Métodos de alteração de estado estão aqui
 public class StateMachine extends BaseStateMachine
 {
     private final Map<String, String> key2values = new ConcurrentHashMap<>();
 
     @Override
     public CompletableFuture<Message> query(Message request) {
+        // METODO CHAVE [PARAM]
         final String[] opKey = request.getContent().toString(Charset.defaultCharset()).split(":");
         final String result = opKey[0]+ ":"+ key2values.get(opKey[1]);
 
@@ -25,6 +30,7 @@ public class StateMachine extends BaseStateMachine
 
     @Override
     public CompletableFuture<Message> applyTransaction(TransactionContext trx) {
+        // METODO CHAVE [PARAM]
         final RaftProtos.LogEntryProto entry = trx.getLogEntry();
         final String[] opKeyValue = entry.getStateMachineLogEntry().getLogData().toString(Charset.defaultCharset()).split(":");
 

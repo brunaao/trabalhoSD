@@ -4,6 +4,7 @@ import br.ufu.sd.grpc.APIGrpc.APIImplBase;
 import br.ufu.sd.grpc.*;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import org.apache.ratis.client.RaftClient;
 
 import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.conf.Parameters;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// Métodos do server GRPC
+// Os métodos irão chamar os métodos do servidor Ratis
 public class ApiService extends APIImplBase {
     private RaftClient raftClient;
 

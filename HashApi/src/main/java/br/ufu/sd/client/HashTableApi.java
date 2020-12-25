@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Cliente final
  * A simple client that requests a API from the {@link HashTableServer}.
  */
 public class HashTableApi {
