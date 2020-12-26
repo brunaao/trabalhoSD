@@ -38,125 +38,54 @@ public class ApiService extends APIImplBase {
         ByteString dados = valorRequest.getData();  
         Valor vLinha;
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("SET " + chave + " " + versao + " " + timeSt + " " + dados));
-        String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-        System.out.println("Resposta:" + response);
+        RaftClientReply getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados));
+        Saida response = getValue.getMessage().getContent();
 
-        //Define a mensagem padrao de erro
-        //String erro = "SUCCESS";
-
-        //Se o valorRequest nao existe no map
-        // if(!map.containsKey(chave)){
-        //     map.put(chave, valorRequest);
-        //     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
-        // } else {
-        //     //se ja existe verifica se o valorRequest eh igual
-        //     if(valorRequest.getTimeSt() != map.get(chave).getTimeSt() && valorRequest.getData() != map.get(chave).getData()){
-        //         Valor valorAtual = map.get(chave);
-        //         Valor novoValor = Valor.newBuilder().setVersion(valorAtual.getVersion() + 1).setTimeSt(valorRequest.getTimeSt()).setData(valorRequest.getData()).build();
-        //         map.put(chave, novoValor);
-        //         vLinha = valorAtual;
-        //     } else {
-        //         erro = "ERROR";
-        //         vLinha = map.get(chave);
-        //     }
-        // }
-
-        //Build e envio da resposta
-        //Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-        //responseObserver.onNext(resposta);
-        //responseObserver.onCompleted();
+        //Envio da resposta
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void get(Chave chave, StreamObserver<Saida> responseObserver) {
-        //Define a mensagem padrao de erro
-        String erro = "ERROR";
-        Valor valor;
 
-        RaftClientReply getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave));
-        String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-        System.out.println("Resposta:" + response);
+        RaftClientReply getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave.getKey()));
+        Saida response = getValue.getMessage().getContent();
 
-        // if(map.get(chave) != null){
-        //     valor = map.get(chave);
-        //     erro = "SUCCESS";
-        // } else {
-        //     valor = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
-        // }
+        // Envio da resposta
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
 
-        // //Build e envio da resposta
-        // Saida resposta = Saida.newBuilder().setError(erro).setValue(valor).build();
-        // responseObserver.onNext(resposta);
-        // responseObserver.onCompleted();
     }
 
     @Override
     public void delK(Chave chave, StreamObserver<Saida> responseObserver) {
 
-        //Define a mensagem padrao de erro
-        String erro = "ERROR";
-        Valor v;
-
         RaftClientReply getValue = raftClient.send(Message.valueOf("DELK " + chave));
-        String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-        System.out.println("Resposta:" + response);
+        Saida response = getValue.getMessage().getContent();
+        
+        // Envio da resposta
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
 
-        // if(map.containsKey(k)){
-        //     v = map.get(k);
-        //     map.remove(k);
-        //     erro = "SUCCESS";
-        // } else {
-        //     v = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
-        // }
-
-        // //Build e envio da resposta
-        // Saida resposta = Saida.newBuilder().setError(erro).setValue(v).build();
-        // responseObserver.onNext(resposta);
-        // responseObserver.onCompleted();
     }
 
     @Override
     public void delKV(ChaveVersao kv, StreamObserver<Saida> responseObserver) {
 
-        //Define a mensagem padrao de erro
-        String erro = "ERROR_NE";
-        Valor v;
-
         Chave chave = kv.getKey();
         long versao = kv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("DELKV " + chave + " " + versao));
-        String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-        System.out.println("Resposta:" + response);
+        RaftClientReply getValue = raftClient.send(Message.valueOf("DELKV " + chave.getKey() + " " + versao));
+        Saida response = getValue.getMessage().getContent();
 
-        // if(map.containsKey(k)){
-        //     v = map.get(k);
-        //     if(v.getVersion() == vers){
-        //         //Existe uma entrada com a mesma versao
-        //         map.remove(k);
-        //         erro = "SUCCESS";
-        //     } else {
-        //         //Existe uma entrada com versao diferente
-        //         erro = "ERROR_WV";
-        //     }
-        // } else {
-        //     //Nao existe entrada
-        //     v = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
-        // }
-
-        // //Build e envio da resposta
-        // Saida resposta = Saida.newBuilder().setError(erro).setValue(v).build();
-        // responseObserver.onNext(resposta);
-        // responseObserver.onCompleted();
+        // Envio da resposta
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override
     public void testAndSet(ChaveValorVersao kvv, StreamObserver<Saida> responseObserver) {
-
-        //Define a mensagem padrao de erro
-        String erro = "ERROR_NE";
-        Valor v;
 
         Chave chave = kvv.getKey();
         Valor valor = kvv.getValue();
@@ -165,29 +94,11 @@ public class ApiService extends APIImplBase {
         ByteString dados = valor.getData(); 
         long versaoVerificacao = kvv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("TAS " + chave + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
-        String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
-        System.out.println("Resposta:" + response);
+        RaftClientReply getValue = raftClient.send(Message.valueOf("TAS " + chave.getKey() + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
+        Saida response = getValue.getMessage().getContent();
 
-        // if(map.containsKey(k)){
-        //     v = map.get(k);
-        //     if(v.getVersion() == vers){
-        //         //Existe uma entrada com a mesma versao
-        //         map.put(k, Valor.newBuilder().setVersion(val.getVersion() + 1).setTimeSt(val.getTimeSt()).setData(val.getData()).build());
-        //         erro = "SUCCESS";
-        //         v = map.get(k);
-        //     } else {
-        //         //Existe uma entrada com versao diferente
-        //         erro = "ERROR_WV";
-        //     }
-        // } else {
-        //     //Nao existe entrada
-        //     v = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
-        // }
-
-        // //Build e envio da resposta
-        // Saida resposta = Saida.newBuilder().setError(erro).setValue(v).build();
-        // responseObserver.onNext(resposta);
-        // responseObserver.onCompleted();
+        // Envio da resposta
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 }
