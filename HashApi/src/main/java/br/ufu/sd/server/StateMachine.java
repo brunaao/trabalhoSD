@@ -52,16 +52,23 @@ public class StateMachine extends BaseStateMachine
 
         final String[] opKeyValue = entry.getStateMachineLogEntry().getLogData().toString(Charset.defaultCharset()).split(" ");
         String result = "";
+        Chave chave;
+        Valor valor;
+        String erro;
+        Valor vLinha;
+        long versao;
+        ByteString stringData;
+        Saida resposta;
+        String stringResposta;
 
         switch (opKeyValue[0]){
             case "SET":
                 // SET CHAVE VERSAO TIMEST DADOS
                 //Retorno: ERRO VERSAO TIMEST DADOS
 
-                Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
-                Valor valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
-                Valor vLinha;
-                String erro = "SUCCESS";
+                chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
+                valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
+                erro = "SUCCESS";
 
                 if(!key2values.containsKey(chave)){
                     key2values.put(chave, valor);
@@ -78,29 +85,23 @@ public class StateMachine extends BaseStateMachine
                         erro = "ERROR";
                     }
                 }
-                long versao = Long.parseLong(opKeyValue[2]);
-                ByteString stringData = ByteString.copyFrom(opKeyValue[4].getBytes());
-                valor = Valor.newBuilder().setVersion(versao).setTimeSt(Long.parseLong(opKeyValue[3])).setData(stringData).build();
-                //key2values.put(chave, valor);
-
-                Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-                String stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
+                resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
                 return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             case "DELK":
                 // DELK CHAVE
 
                 chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
-                erro = "ERROR";
+                erro = "SUCCESS";
 
                 if(key2values.containsKey(chave)){
                     vLinha = key2values.get(chave);
-                    key2values.remove(chave);
-                    erro = "SUCCESS";
+                    key2values.get(chave);
                 } else {
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
+                    erro = "ERROR";
                 }
-                key2values.remove(chave);
 
                 resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
                 stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
