@@ -153,11 +153,14 @@ public class TestClient implements Runnable {
         Thread[] testes = new Thread[n];
         Random rand = new Random();
         int port = 50050 + rand.nextInt(3) + 1;
-        String target = "localhost:" + port;
-        System.out.println("Connecting to " + target);
 
+        String target = "localhost:" + port;
+        
         System.out.println("============TESTES============");
         for (int i = 0; i < n; i++) {
+            port = 50050 + rand.nextInt(3) + 1;
+            target = "localhost:" + port;
+            System.out.println("Connecting client " + n + " to " + target);
             ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
                     .usePlaintext()
                     .build();

@@ -37,7 +37,7 @@ public class HashTableServer {
 
     public HashTableServer() {
         id2addr = new HashMap<>();
-        id2addr.put("p1", new InetSocketAddress("127.0.0.1", 3000));
+        id2addr.put("p1", new InetSocketAddress("127.0.0.1", 3001));
         id2addr.put("p2", new InetSocketAddress("127.0.0.1", 3500));
         id2addr.put("p3", new InetSocketAddress("127.0.0.1", 4000));
 
