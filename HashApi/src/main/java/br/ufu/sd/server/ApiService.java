@@ -60,14 +60,21 @@ public class ApiService extends APIImplBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Retornou do send: " + getValue.getMessage().getContent().toString(Charset.defaultCharset()));
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
         long versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
-        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        ByteString dados;
+        if(stringRetorno.length > 3){
+            dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        }else{
+            dados = ByteString.copyFrom("".getBytes());
+        }
         Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
         // Envio da resposta
+        System.out.println("Response: " + response);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -77,14 +84,19 @@ public class ApiService extends APIImplBase {
 
         RaftClientReply getValue = null;
         try {
-            getValue = raftClient.send(Message.valueOf("DELK " + chave));
+            getValue = raftClient.send(Message.valueOf("DELK " + chave.getKey()));
         } catch (IOException e) {
             e.printStackTrace();
         }
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
         long versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
-        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        ByteString dados;
+        if(stringRetorno.length > 3){
+            dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        }else{
+            dados = ByteString.copyFrom("".getBytes());
+        }
         Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
         
@@ -108,7 +120,12 @@ public class ApiService extends APIImplBase {
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
         versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
-        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        ByteString dados;
+        if(stringRetorno.length > 3){
+            dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        }else{
+            dados = ByteString.copyFrom("".getBytes());
+        }
         Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
@@ -129,14 +146,18 @@ public class ApiService extends APIImplBase {
 
         RaftClientReply getValue = null;
         try {
-            getValue = raftClient.send(Message.valueOf("TAS " + chave.getKey() + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
+            getValue = raftClient.send(Message.valueOf("TAS " + chave.getKey() + " " + versao + " " + timeSt + " " + dados.toStringUtf8() + " "  + versaoVerificacao));
         } catch (IOException e) {
             e.printStackTrace();
         }
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
         versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
-        dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        if(stringRetorno.length > 3){
+            dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        }else{
+            dados = ByteString.copyFrom("".getBytes());
+        }
         Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 

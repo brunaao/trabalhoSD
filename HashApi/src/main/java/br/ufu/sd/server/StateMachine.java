@@ -65,7 +65,6 @@ public class StateMachine extends BaseStateMachine
             case "SET":
                 // SET CHAVE VERSAO TIMEST DADOS
                 //Retorno: ERRO VERSAO TIMEST DADOS
-
                 chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
                 valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
                 erro = "SUCCESS";
@@ -91,13 +90,12 @@ public class StateMachine extends BaseStateMachine
 
             case "DELK":
                 // DELK CHAVE
-
                 chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
                 erro = "SUCCESS";
 
                 if(key2values.containsKey(chave)){
                     vLinha = key2values.get(chave);
-                    key2values.get(chave);
+                    key2values.remove(chave);
                 } else {
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
                     erro = "ERROR";
