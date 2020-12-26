@@ -37,7 +37,6 @@ public class ApiService extends APIImplBase {
         }
 
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
-        System.out.println(getValue.getMessage().getContent().toString(Charset.defaultCharset()));
         versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
         if(stringRetorno.length > 3){
@@ -60,7 +59,6 @@ public class ApiService extends APIImplBase {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("Retornou do send: " + getValue.getMessage().getContent().toString(Charset.defaultCharset()));
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
         long versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
@@ -74,7 +72,6 @@ public class ApiService extends APIImplBase {
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
         // Envio da resposta
-        System.out.println("Response: " + response);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

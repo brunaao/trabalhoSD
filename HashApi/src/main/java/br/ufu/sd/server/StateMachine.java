@@ -160,15 +160,8 @@ public class StateMachine extends BaseStateMachine
             default:
                 break;
         }
-        
-        final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
+        System.out.println("Metodo invalido");
 
-        final RaftProtos.RaftPeerRole role = trx.getServerRole();
-        System.out.println(role + ":" + getId() + " " + opKeyValue[0] + "=" + opKeyValue[1] + " " + opKeyValue[2]);
-
-        if (LOG.isTraceEnabled()) {
-            System.out.println(getId() + ":key/values=" + key2values);
-        }
-        return f;
+        return CompletableFuture.completedFuture(Message.valueOf(""));
     }
 }
