@@ -8,14 +8,13 @@ import org.apache.ratis.client.RaftClient;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.protocol.RaftClientReply;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 // Métodos do server GRPC
 // Os métodos irão chamar os métodos do servidor Ratis
 public class ApiService extends APIImplBase {
-<<<<<<< HEAD
-    final private RaftClient raftClient;
-=======
     private final RaftClient raftClient;
->>>>>>> 0b86311aef750916236d8271a290e5e425793239
 
     public ApiService(RaftClient client) {
         this.raftClient = client;
@@ -50,7 +49,6 @@ public class ApiService extends APIImplBase {
 
     @Override
     public void get(Chave chave, StreamObserver<Saida> responseObserver) {
-<<<<<<< HEAD
 
         RaftClientReply getValue = null;
         try {
@@ -64,10 +62,6 @@ public class ApiService extends APIImplBase {
         ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
         Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
-=======
-        RaftClientReply getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave.getKey()));
-        Saida response = getValue.getMessage().getContent();
->>>>>>> 0b86311aef750916236d8271a290e5e425793239
 
         // Envio da resposta
         responseObserver.onNext(response);

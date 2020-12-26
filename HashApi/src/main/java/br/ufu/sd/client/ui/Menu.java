@@ -149,7 +149,9 @@ public class Menu extends javax.swing.JFrame {
      */
     public static void main(String args[]) throws InterruptedException {
         Random rand = new Random();
-        int port = 50050 + (Math.abs(rand.nextInt()) % 3) + 1;
+        int num = rand.nextInt(3) + 1;
+        int port = 50050 + num;
+        System.out.println(num);
         String target = "localhost:" + port;
         System.out.println("Connecting to " + target);
         /* Set the Nimbus look and feel */
