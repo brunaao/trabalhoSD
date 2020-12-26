@@ -5,25 +5,16 @@ import br.ufu.sd.grpc.*;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import org.apache.ratis.client.RaftClient;
-
-import org.apache.ratis.client.RaftClient;
-import org.apache.ratis.conf.Parameters;
-import org.apache.ratis.conf.RaftProperties;
-import org.apache.ratis.grpc.GrpcFactory;
-import org.apache.ratis.protocol.*;
+import org.apache.ratis.protocol.Message;
+import org.apache.ratis.protocol.RaftClientReply;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 // Métodos do server GRPC
 // Os métodos irão chamar os métodos do servidor Ratis
 public class ApiService extends APIImplBase {
-    private RaftClient raftClient;
+    private final RaftClient raftClient;
 
     public ApiService(RaftClient client) {
         this.raftClient = client;
@@ -38,7 +29,14 @@ public class ApiService extends APIImplBase {
         ByteString dados = valorRequest.getData();  
         Valor vLinha;
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("SET " + chave + " " + versao + " " + timeSt + " " + dados));
+        RaftClientReply getValue;
+        try {
+            //getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados));
+            getValue = raftClient.sendReadOnly(Message.valueOf("SET "));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
         System.out.println("Resposta:" + response);
 
@@ -74,7 +72,13 @@ public class ApiService extends APIImplBase {
         String erro = "ERROR";
         Valor valor;
 
-        RaftClientReply getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave));
+        RaftClientReply getValue;
+        try {
+            getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
         System.out.println("Resposta:" + response);
 
@@ -98,7 +102,13 @@ public class ApiService extends APIImplBase {
         String erro = "ERROR";
         Valor v;
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("DELK " + chave));
+        RaftClientReply getValue;
+        try {
+            getValue = raftClient.send(Message.valueOf("DELK " + chave));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
         System.out.println("Resposta:" + response);
 
@@ -126,7 +136,13 @@ public class ApiService extends APIImplBase {
         Chave chave = kv.getKey();
         long versao = kv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("DELKV " + chave + " " + versao));
+        RaftClientReply getValue;
+        try {
+            getValue = raftClient.send(Message.valueOf("DELKV " + chave + " " + versao));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
         System.out.println("Resposta:" + response);
 
@@ -165,7 +181,13 @@ public class ApiService extends APIImplBase {
         ByteString dados = valor.getData(); 
         long versaoVerificacao = kvv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("TAS " + chave + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
+        RaftClientReply getValue;
+        try {
+            getValue = raftClient.send(Message.valueOf("TAS " + chave + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
         String response = getValue.getMessage().getContent().toString(Charset.defaultCharset());
         System.out.println("Resposta:" + response);
 

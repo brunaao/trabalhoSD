@@ -9,6 +9,8 @@ package br.ufu.sd.client.ui;
 import br.ufu.sd.client.HashTableApi;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -146,7 +148,10 @@ public class Menu extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) throws InterruptedException {
-        String target = "localhost:50051";
+        Random rand = new Random();
+        int port = 50050 + (Math.abs(rand.nextInt()) % 3) + 1;
+        String target = "localhost:" + port;
+        System.out.println("Connecting to " + target);
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
