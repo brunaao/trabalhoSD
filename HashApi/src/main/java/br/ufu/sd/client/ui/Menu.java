@@ -150,6 +150,9 @@ public class Menu extends javax.swing.JFrame {
     public static void main(String args[]) throws InterruptedException {
         Random rand = new Random();
         int num = rand.nextInt(3) + 1;
+        if (args.length > 0) {
+            num = Integer.parseInt(args[0].substring(1));
+        }
         int port = 50050 + num;
         String target = "localhost:" + port;
         System.out.println("Connecting to " + target);
