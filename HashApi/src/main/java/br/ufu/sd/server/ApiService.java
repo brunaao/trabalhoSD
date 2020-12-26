@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 // Métodos do server GRPC
 // Os métodos irão chamar os métodos do servidor Ratis
 public class ApiService extends APIImplBase {
-    private RaftClient raftClient;
+    final private RaftClient raftClient;
 
     public ApiService(RaftClient client) {
         this.raftClient = client;
@@ -38,8 +38,18 @@ public class ApiService extends APIImplBase {
         ByteString dados = valorRequest.getData();  
         Valor vLinha;
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados));
-        Saida response = getValue.getMessage().getContent();
+        RaftClientReply getValue = null;
+        try {
+            getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        versao = Long.parseLong(stringRetorno[1]);
+        long timeStamp = Long.parseLong(stringRetorno[2]);
+        dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        Valor valorRetorno = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
+        Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(valorRetorno).build();
 
         //Envio da resposta
         responseObserver.onNext(response);
@@ -49,8 +59,18 @@ public class ApiService extends APIImplBase {
     @Override
     public void get(Chave chave, StreamObserver<Saida> responseObserver) {
 
-        RaftClientReply getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave.getKey()));
-        Saida response = getValue.getMessage().getContent();
+        RaftClientReply getValue = null;
+        try {
+            getValue = raftClient.sendReadOnly(Message.valueOf("GET " + chave.getKey()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        long versao = Long.parseLong(stringRetorno[1]);
+        long timeStamp = Long.parseLong(stringRetorno[2]);
+        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
+        Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
         // Envio da resposta
         responseObserver.onNext(response);
@@ -61,8 +81,18 @@ public class ApiService extends APIImplBase {
     @Override
     public void delK(Chave chave, StreamObserver<Saida> responseObserver) {
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("DELK " + chave));
-        Saida response = getValue.getMessage().getContent();
+        RaftClientReply getValue = null;
+        try {
+            getValue = raftClient.send(Message.valueOf("DELK " + chave));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        long versao = Long.parseLong(stringRetorno[1]);
+        long timeStamp = Long.parseLong(stringRetorno[2]);
+        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
+        Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
         
         // Envio da resposta
         responseObserver.onNext(response);
@@ -76,8 +106,18 @@ public class ApiService extends APIImplBase {
         Chave chave = kv.getKey();
         long versao = kv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("DELKV " + chave.getKey() + " " + versao));
-        Saida response = getValue.getMessage().getContent();
+        RaftClientReply getValue = null;
+        try {
+            getValue = raftClient.send(Message.valueOf("DELKV " + chave.getKey() + " " + versao));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        versao = Long.parseLong(stringRetorno[1]);
+        long timeStamp = Long.parseLong(stringRetorno[2]);
+        ByteString dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
+        Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
         // Envio da resposta
         responseObserver.onNext(response);
@@ -94,8 +134,18 @@ public class ApiService extends APIImplBase {
         ByteString dados = valor.getData(); 
         long versaoVerificacao = kvv.getVersion();
 
-        RaftClientReply getValue = raftClient.send(Message.valueOf("TAS " + chave.getKey() + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
-        Saida response = getValue.getMessage().getContent();
+        RaftClientReply getValue = null;
+        try {
+            getValue = raftClient.send(Message.valueOf("TAS " + chave.getKey() + " " + versao + " " + timeSt + " " + dados + " "  + versaoVerificacao));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        versao = Long.parseLong(stringRetorno[1]);
+        long timeStamp = Long.parseLong(stringRetorno[2]);
+        dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        Valor vLinha = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
+        Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(vLinha).build();
 
         // Envio da resposta
         responseObserver.onNext(response);

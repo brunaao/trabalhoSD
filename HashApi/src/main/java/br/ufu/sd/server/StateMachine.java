@@ -1,5 +1,9 @@
 package br.ufu.sd.server;
 
+import br.ufu.sd.grpc.Chave;
+import br.ufu.sd.grpc.Saida;
+import br.ufu.sd.grpc.Valor;
+import com.google.protobuf.ByteString;
 import org.apache.ratis.proto.RaftProtos;
 import org.apache.ratis.protocol.Message;
 import org.apache.ratis.statemachine.TransactionContext;
@@ -15,15 +19,16 @@ import java.util.concurrent.ConcurrentHashMap;
 // Métodos de alteração de estado estão aqui
 public class StateMachine extends BaseStateMachine
 {
-    private final Map<String, String> key2values = new ConcurrentHashMap<>();
+    private final Map<Chave, Valor> key2values = new ConcurrentHashMap<>();
 
     @Override
     public CompletableFuture<Message> query(Message request) {
 
         // GET CHAVE
         final String[] opKey = request.getContent().toString(Charset.defaultCharset()).split(" ");
+        String stringResposta;
 
-        Chave chave = Valor.newBuilder().setKey(Long.parseLong(opKey[1], 10)).build();
+        Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKey[1], 10)).build();
         Valor valor = key2values.get(chave);
         String erro = "ERROR";
 
@@ -33,9 +38,9 @@ public class StateMachine extends BaseStateMachine
             valor = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
         }
 
-        Saida resposta = Saida.newBuilder().setError(erro).setValue(response).build();
-
-        return CompletableFuture.completedFuture(resposta);
+        Saida resposta = Saida.newBuilder().setError(erro).setValue(valor).build();
+        stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+        return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
     }
 
@@ -44,11 +49,13 @@ public class StateMachine extends BaseStateMachine
     public CompletableFuture<Message> applyTransaction(TransactionContext trx) {
         // METODO CHAVE [PARAM]
         final RaftProtos.LogEntryProto entry = trx.getLogEntry();
-        final String[] opKeyValue = entry.getStateMachineLogEntry().getLogData().toString(Charset.defaultCharset()).split(":");
+        final String[] opKeyValue = entry.getStateMachineLogEntry().getLogData().toString(Charset.defaultCharset()).split(" ");
+        String result = "";
 
         switch (opKeyValue[0]){
             case "SET":
                 // SET CHAVE VERSAO TIMEST DADOS
+                //Retorno: ERRO VERSAO TIMEST DADOS
 
                 Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
                 Valor valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
@@ -70,17 +77,20 @@ public class StateMachine extends BaseStateMachine
                         erro = "ERROR";
                     }
                 }
+                long versao = Long.parseLong(opKeyValue[2]);
+                ByteString stringData = ByteString.copyFrom(opKeyValue[4].getBytes());
+                valor = Valor.newBuilder().setVersion(versao).setTimeSt(Long.parseLong(opKeyValue[3])).setData(stringData).build();
+                result = opKeyValue[0]+ ":"+ key2values.put(chave, valor);
 
                 Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-
-                return CompletableFuture.completedFuture(resposta);
+                String stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             case "DELK":
                 // DELK CHAVE
 
-                Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
-                Valor vLinha;
-                String erro = "ERROR";
+                chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
+                erro = "ERROR";
 
                 if(key2values.containsKey(chave)){
                     vLinha = key2values.get(chave);
@@ -90,16 +100,15 @@ public class StateMachine extends BaseStateMachine
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
                 }
 
-                Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-
-                return CompletableFuture.completedFuture(resposta);
+                resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
                 
             case "DELKV":
                 // DELKV CHAVE VERSAO
-                Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
-                long versao = Long.parseLong(opKeyValue[2], 10);
-                String erro = "ERROR_NE";
-                Valor vLinha;
+                chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
+                versao = Long.parseLong(opKeyValue[2], 10);
+                erro = "ERROR_NE";
 
                 if(key2values.containsKey(chave)){
                     vLinha = key2values.get(chave);
@@ -116,17 +125,16 @@ public class StateMachine extends BaseStateMachine
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
                 }
 
-                Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-
-                return CompletableFuture.completedFuture(resposta);
+                resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             case "TAS":
                 // TAS CHAVE VERSAO TIMEST DADOS VERSAOVERIFICACAO
-                Chave chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
-                Valor valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
-                long versao = Long.parseLong(opKeyValue[5], 10);
-                String erro = "ERROR_NE";
-                Valor vLinha;
+                chave = Chave.newBuilder().setKey(Long.parseLong(opKeyValue[1], 10)).build();
+                valor = Valor.newBuilder().setVersion(Long.parseLong(opKeyValue[2], 10)).setTimeSt(Long.parseLong(opKeyValue[3], 10)).setData(ByteString.copyFrom(opKeyValue[4].getBytes())).build();
+                versao = Long.parseLong(opKeyValue[5], 10);
+                erro = "ERROR_NE";
 
                 if(key2values.containsKey(chave)){
                     vLinha = key2values.get(chave);
@@ -144,15 +152,13 @@ public class StateMachine extends BaseStateMachine
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
                 }
 
-                Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-
-                return CompletableFuture.completedFuture(resposta);
+                resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             default:
                 break;
         }
-
-        final String result = opKeyValue[0]+ ":"+ key2values.put(opKeyValue[1], opKeyValue[2]);
         
         final CompletableFuture<Message> f = CompletableFuture.completedFuture(Message.valueOf(result));
 
