@@ -151,7 +151,10 @@ public class TestClient implements Runnable {
 
         TestClient[] clients = new TestClient[n];
         Thread[] testes = new Thread[n];
-        String target = "localhost:50051";
+        Random rand = new Random();
+        int port = 50050 + (rand.nextInt() % 3) + 1;
+        String target = "localhost:" + port;
+        System.out.println("Connecting to " + target);
 
         System.out.println("============TESTES============");
         for (int i = 0; i < n; i++) {

@@ -49,37 +49,39 @@ public class HashTableServer {
     }
 
     // Server GRPC
-    private void start(String serverId, RaftClient raftClient) throws IOException {
-        int port = 50051;
+    private void start(String serverId) throws IOException {
+        Thread ratis = new Thread(() -> {
+            try {
+                startRatis(serverId);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+        });
+        ratis.start();
+        RaftClient raftClient = HashTableServer.getRaftClient();
+        int port = 50050 + Integer.parseInt(serverId.substring(1));
+        logger.info("Iniciando servidor  na porta " + port + ".");
         server = ServerBuilder.forPort(port)
                 .addService(new ApiService(raftClient))
                 .build()
                 .start();
-        logger.info("Servidor iniciado na porta " + port + ".");
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                // Use stderr here since the logger may have been reset by its JVM shutdown hook.
-                System.err.println("*** shutting down gRPC server since JVM is shutting down");
-                try {
-                    HashTableServer.this.stop();
-                } catch (InterruptedException e) {
-                    e.printStackTrace(System.err);
-                }
-                System.err.println("*** server shut down");
-            }
-        });
-        try {
-            startRatis(serverId);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            // Use stderr here since the logger may have been reset by its JVM shutdown hook.
+            System.err.println("*** shutting down gRPC server since JVM is shutting down");
             try {
-                stop();
-            } catch (InterruptedException interruptedException) {
-                System.out.println("Não foi possível finalizar a execução do servidor GRPC");
+                HashTableServer.this.stop();
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace(System.err);
+                try {
+                    stop();
+                    raftClient.close();
+                } catch (InterruptedException | IOException exception) {
+                    exception.printStackTrace();
+                }
             }
-            System.exit(1);
-        }
+            System.err.println("*** server shut down");
+        }));
     }
 
     // Server Ratis
@@ -95,6 +97,7 @@ public class HashTableServer {
 
         RaftProperties properties = new RaftProperties();
         properties.setInt(GrpcConfigKeys.OutputStream.RETRY_TIMES_KEY, Integer.MAX_VALUE);
+
         GrpcConfigKeys.Server.setPort(properties, id2addr.get(serverId).getPort());
         RaftServerConfigKeys.setStorageDir(properties, Collections.singletonList(new File("/tmp/" + myId)));
 
@@ -119,7 +122,7 @@ public class HashTableServer {
         }
     }
 
-    private void stop() throws InterruptedException {
+    private void stop() throws InterruptedException, IOException {
         if (server != null) {
             server.shutdown().awaitTermination(30, TimeUnit.SECONDS);
         }
@@ -138,10 +141,9 @@ public class HashTableServer {
      * Main launches the server from the command line.
      */
     public static void main(String[] args) throws IOException, InterruptedException {
-        RaftClient raftClient = HashTableServer.getRaftClient();
         final HashTableServer server = new HashTableServer();
         if (args.length == 1) {
-            server.start(args[0], raftClient);
+            server.start(args[0]);
         } else {
             System.out.println("É necessário informar um identificador para o servidor");
             System.exit(1);
