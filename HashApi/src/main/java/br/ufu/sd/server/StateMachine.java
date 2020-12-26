@@ -39,7 +39,7 @@ public class StateMachine extends BaseStateMachine
         }
 
         Saida resposta = Saida.newBuilder().setError(erro).setValue(valor).build();
-        stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+        stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
         return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
     }
@@ -49,6 +49,7 @@ public class StateMachine extends BaseStateMachine
     public CompletableFuture<Message> applyTransaction(TransactionContext trx) {
         // METODO CHAVE [PARAM]
         final RaftProtos.LogEntryProto entry = trx.getLogEntry();
+
         final String[] opKeyValue = entry.getStateMachineLogEntry().getLogData().toString(Charset.defaultCharset()).split(" ");
         String result = "";
 
@@ -80,10 +81,10 @@ public class StateMachine extends BaseStateMachine
                 long versao = Long.parseLong(opKeyValue[2]);
                 ByteString stringData = ByteString.copyFrom(opKeyValue[4].getBytes());
                 valor = Valor.newBuilder().setVersion(versao).setTimeSt(Long.parseLong(opKeyValue[3])).setData(stringData).build();
-                result = opKeyValue[0]+ ":"+ key2values.put(chave, valor);
+                //key2values.put(chave, valor);
 
                 Saida resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-                String stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                String stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
                 return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             case "DELK":
@@ -99,9 +100,10 @@ public class StateMachine extends BaseStateMachine
                 } else {
                     vLinha = Valor.newBuilder().setVersion(0).setTimeSt(0).setData(ByteString.copyFrom("".getBytes())).build();
                 }
+                key2values.remove(chave);
 
                 resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
                 return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
                 
             case "DELKV":
@@ -126,7 +128,7 @@ public class StateMachine extends BaseStateMachine
                 }
 
                 resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
                 return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             case "TAS":
@@ -153,7 +155,7 @@ public class StateMachine extends BaseStateMachine
                 }
 
                 resposta = Saida.newBuilder().setError(erro).setValue(vLinha).build();
-                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData();
+                stringResposta = resposta.getError() + " " + resposta.getValue().getVersion() + " " +  resposta.getValue().getTimeSt() + " " +  resposta.getValue().getData().toStringUtf8();
                 return CompletableFuture.completedFuture(Message.valueOf(stringResposta));
 
             default:

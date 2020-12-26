@@ -31,14 +31,18 @@ public class ApiService extends APIImplBase {
 
         RaftClientReply getValue = null;
         try {
-            getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados));
+            getValue = raftClient.send(Message.valueOf("SET " + chave.getKey() + " " + versao + " " + timeSt + " " + dados.toStringUtf8()));
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         String[] stringRetorno = getValue.getMessage().getContent().toString(Charset.defaultCharset()).split(" ");
+        System.out.println(getValue.getMessage().getContent().toString(Charset.defaultCharset()));
         versao = Long.parseLong(stringRetorno[1]);
         long timeStamp = Long.parseLong(stringRetorno[2]);
-        dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        if(stringRetorno.length > 3){
+            dados = ByteString.copyFrom(stringRetorno[3].getBytes());
+        }
         Valor valorRetorno = Valor.newBuilder().setVersion(versao).setTimeSt(timeStamp).setData(dados).build();
         Saida response = Saida.newBuilder().setError(stringRetorno[0]).setValue(valorRetorno).build();
 
