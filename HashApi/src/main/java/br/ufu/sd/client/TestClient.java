@@ -160,7 +160,7 @@ public class TestClient implements Runnable {
         for (int i = 0; i < n; i++) {
             port = 50050 + rand.nextInt(3) + 1;
             target = "localhost:" + port;
-            System.out.println("Connecting client " + n + " to " + target);
+            System.out.println("Connecting client " + (i + 1) + " to " + target);
             ManagedChannel channel = ManagedChannelBuilder.forTarget(target)
                     .usePlaintext()
                     .build();
